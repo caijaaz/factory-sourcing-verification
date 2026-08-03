@@ -29,15 +29,15 @@
 
 ## 安装
 
-**WorkBuddy（用户级）：**
+**通用 agent（用户级）：**
 
 ```bash
-git clone https://github.com/<your-org>/factory-sourcing-verification.git ~/.workbuddy/skills/factory-sourcing-verification
+git clone https://github.com/<your-org>/factory-sourcing-verification.git <agent-skills-dir>/factory-sourcing-verification
 ```
 
-之后说"找工厂 / 验厂 / 资质核验 / 剔除贸易商"即自动触发。
+将 `<agent-skills-dir>` 替换为你所用 agent 的用户级 skills 目录。之后说"找工厂 / 验厂 / 资质核验 / 剔除贸易商"即自动触发。
 
-**其它 Agent（Claude Code 等）：** clone 后放入对应 skills 目录（如 `~/.claude/skills/factory-sourcing-verification`），或直接使用仓库内的 `factory-sourcing-verification.zip`。
+**其它 agent：** clone 后放入该 agent 对应的 skills 目录（目录位置按各 agent 约定），或直接使用仓库内的 `factory-sourcing-verification.zip`。
 
 ## 目录结构
 
