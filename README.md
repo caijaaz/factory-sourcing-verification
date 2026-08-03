@@ -32,7 +32,7 @@
 **通用 agent（用户级）：**
 
 ```bash
-git clone https://github.com/<your-org>/factory-sourcing-verification.git <agent-skills-dir>/factory-sourcing-verification
+git clone https://github.com/caijaaz/factory-sourcing-verification.git <agent-skills-dir>/factory-sourcing-verification
 ```
 
 将 `<agent-skills-dir>` 替换为你所用 agent 的用户级 skills 目录。之后说"找工厂 / 验厂 / 资质核验 / 剔除贸易商"即自动触发。
