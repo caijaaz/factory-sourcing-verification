@@ -1,81 +1,160 @@
 # factory-sourcing-verification
 
-通用「找真实生产工厂 + 资质核验」方法论 Skill —— 从公开信息中挖掘并核验中国真实生产厂，剔除贸易商/皮包公司，产出可直接询盘的分级工厂池。
+**An AI skill that finds real Chinese factories — and proves they're real.**
 
-> A generic, category-agnostic skill for sourcing real manufacturing factories in China: verify qualifications, filter out traders, and deliver a ranked, inquiry-ready factory pool.
+Verifies business status, import/export credentials, production licences and whether your product is actually in production. Separates genuine manufacturers from trading companies. Delivers a ranked, inquiry-ready factory pool.
 
-## 它解决什么问题
+> 通用「找真实生产工厂 + 资质核验」方法论 Skill。中文说明见 **[README.zh-CN.md](./README.zh-CN.md)**。
 
-外贸/采购找厂时最大的坑不是"找不到厂"，而是：
+---
 
-- 自称 manufacturer 的英文站，实际是参保 1 人的壳公司；
-- 手持制备专利的"研发型公司"，根本没有生产许可；
-- 有生产许可证，但**许可范围里没有目标产品**；
-- 平台数据（企查查/天眼查）显示"存续"，实际信息滞后或张冠李戴。
+## The problem
 
-本 skill 把一次真实出口找厂实战提炼为品类无关的通用流程，通过**多源交叉核验**而不是单信任何一家平台，判断"是不是真厂、能不能合规出货"。
+If you've sourced from China, you've met these four. The hard part isn't *finding* a factory — it's finding one that **is one**:
 
-## 五阶段工作流
+| What you see | What's actually there |
+|---|---|
+| A polished English site saying "manufacturer" | A shell company with **one employee** on the social-insurance roll |
+| A "R&D company" holding patents | **No production licence at all** |
+| A valid production licence | **Its licensed scope doesn't cover your product** |
+| A directory listing showing "active" | Stale data — or a **different company with the same name** |
+
+The last one is the nastiest. Chinese company names collide constantly, and a directory entry that says "active" tells you nothing about whether the entity you're talking to is the entity on the licence.
+
+This skill turns one real export-sourcing engagement into a **category-agnostic, repeatable process**. Rather than trusting any single platform, it **cross-verifies across multiple official sources** and answers two questions:
+
+1. **Is this a real factory?**
+2. **Can it legally ship my product?**
+
+---
+
+## You don't need to read Chinese for this
+
+This is the part most foreign buyers get wrong about tools like this.
+
+The skill is written as **instructions for your AI agent** — not as documentation for you. Your agent reads the Chinese-language sources (government disclosure portals, licence registries, recruitment listings, industry directories), runs the cross-checks, and **reports back in your language, with company names given in both Chinese and pinyin/English**.
+
+So the Chinese source material isn't a barrier. It's the whole point: the verification evidence for a Chinese factory lives on Chinese-language official sites, and that's exactly what your agent is there to read.
+
+**What you need:**
+- An agent that supports skills (e.g. Claude Code, WorkBuddy, or any agent following the `SKILL.md` convention)
+- Nothing else
+
+---
+
+## The five-stage workflow
 
 ```
-阶段1 锁定需求与门槛  →  产品标识(CAS/型号) + 订单画像 + 硬性资质门槛 + 属地偏好
-阶段2 分层渠道撒网    →  撒网层/反查层/实景核验层/出货铁证层 + 可选受限层（12 主线渠道）
-阶段3 四维核验        →  存续 / 进出口资质 / 生产资质(看许可范围+有效期) / 目标产品在产
-阶段4 分级与剔除      →  ★铁证首选 / Tier-1~3 / 剔除（必须记录死因，防重复捞回）
-阶段5 交付            →  Excel 资质汇总表(9列池+剔除表) + PDF 工厂卡片 + 问厂话术
+Stage 1  Scope & thresholds   → product ID (CAS / model no.) + order profile
+                                 + mandatory qualification thresholds + preferred region
+
+Stage 2  Layered channel sweep → sweep layer / reverse-lookup layer / on-the-ground layer
+                                 / shipping-evidence layer (12 core channels)
+                                 + optional restricted layer
+
+Stage 3  Four-dimension check  → ① business status
+                                 ② import/export credentials
+                                 ③ production licence — scope AND validity
+                                 ④ target product actually in production
+
+Stage 4  Rank & eliminate      → ★ top pick / Tier 1–3 / excluded
+                                 (exclusion reason recorded, to prevent re-harvesting)
+
+Stage 5  Deliver               → Excel qualification table
+                                 + PDF factory cards
+                                 + inquiry scripts
 ```
 
-核心判断标准见 `references/verification-rules.md`（证据强度四级：铁证 > 强证 > 弱证 > 无效）。
+Evidence is graded in four levels — **hard evidence > strong > weak > invalid** — so "it's on their website" never gets mistaken for "it's been verified". See `references/verification-rules.md`.
 
-## 安装
+---
 
-**通用 agent（用户级）：**
+## Install
+
+**With git (user-level):**
 
 ```bash
-git clone https://github.com/caijaaz/factory-sourcing-verification.git <agent-skills-dir>/factory-sourcing-verification
+git clone https://github.com/caijaaz/factory-sourcing-verification.git <your-agent-skills-dir>/factory-sourcing-verification
 ```
 
-将 `<agent-skills-dir>` 替换为你所用 agent 的用户级 skills 目录。之后说"找工厂 / 验厂 / 资质核验 / 剔除贸易商"即自动触发。
+Replace `<your-agent-skills-dir>` with your agent's user-level skills directory.
 
-**其它 agent：** clone 后放入该 agent 对应的 skills 目录（目录位置按各 agent 约定），或直接使用仓库内的 `factory-sourcing-verification.zip`。
+**Without git:** click **`Code` → `Download ZIP`** at the top of this repo page, unzip, and drop the `factory-sourcing-verification/` folder into your agent's skills directory.
 
-## 目录结构
+Then just ask, in plain English:
+
+> *"Find me factories in China that make [product]"*
+>
+> *"Is this Chinese supplier a real manufacturer or a trading company?"*
+>
+> *"Verify this factory's qualifications before I place an order"*
+>
+> *"Who actually manufactures [brand]'s product?"*
+
+---
+
+## What you get
+
+**Input** — the agent will ask for anything it's missing:
+
+- Product name **+ unique identifier** (CAS number, model number)
+- Order profile (quantity, container type, target market)
+- Mandatory qualification thresholds, in priority order
+- Preferred region
+- Preferred deliverable format
+
+**Output:**
+
+1. **Excel qualification table**
+   - Sheet 1 — *Verified factory pool*, 9 columns: factory / business status / import-export credentials / production licence / target product in production / positioning / contact / address / production scale
+   - Sheet 2 — *Excluded list & reasoning* (so you never re-contact a dead lead)
+2. **PDF factory cards** — one card per factory, with risk flags
+3. **A ranked verdict in-conversation**, plus recommended next actions
+
+---
+
+## Repository layout
 
 ```
 factory-sourcing-verification/
-├── SKILL.md                        # 主入口：五阶段流水线 + 输入输出 + 决策红线
-├── README.md
+├── SKILL.md                        # Main entry: 5-stage pipeline, I/O, decision red lines
+├── README.md                       # This file (English)
+├── README.zh-CN.md                 # 中文说明
 ├── LICENSE                         # MIT
-├── requirements.txt                # 脚本依赖：openpyxl
+├── requirements.txt                # script dependency: openpyxl
 ├── references/
-│   ├── channels.md                 # 分层渠道矩阵（12 主线 + 可选受限层）
-│   ├── verification-rules.md       # 四维核验细则 + 典型翻车模式
-│   └── inquiry-template.md         # 问厂话术（电话四连问 + 询价邮件模板）
+│   ├── channels.md                 # Layered channel matrix (12 core + optional restricted layer)
+│   ├── verification-rules.md       # Four-dimension check details + common failure patterns
+│   └── inquiry-template.md         # Inquiry scripts (phone script + RFQ email template)
 └── scripts/
-    └── gen_factory_xlsx.py         # Excel 资质汇总表生成模板
+    └── gen_factory_xlsx.py         # Excel qualification-table generator
 ```
 
-## 输入与输出
-
-**输入（缺一项就先问）：** 产品名+唯一标识、订单画像（数量/柜型/目标市场）、硬性资质门槛（按优先级）、属地偏好、交付形式偏好。
-
-**输出：**
-1. Excel 资质汇总表：表1「真实生产厂池」9 列（厂家/存续/进出口资质/生产资质/目标产品在产/定位/联系方式/地址/生产规模）+ 表2「剔除名单与方法」
-2. PDF 工厂卡片清单（每厂一卡 + 风险提示）
-3. 对话内分级结论 + 下一步行动建议
-
-## 脚本依赖
+## Script dependency
 
 ```bash
 pip install -r requirements.txt   # openpyxl
-python scripts/gen_factory_xlsx.py 输出路径.xlsx
+python scripts/gen_factory_xlsx.py output.xlsx
 ```
 
-## 合规与免责
+---
 
-- 全部信息来自**公开渠道多源交叉核验**（政府公示、行业名录、公开报道等），不依赖任何未经授权的批量抓取；数据公开 ≠ 爬取合规，请勿突破任何网站技术措施。
-- 工商/资质信息可能滞后或变动，正式合作前请向工厂书面复核并以最新官方文件为准。
-- 本仓库为方法论工具，输出仅供参考，不构成法律或商业建议。
+## Compliance & disclaimer
+
+- All information comes from **public sources, cross-verified** — government disclosure, industry directories, public reporting. No unauthorised bulk scraping. **Publicly available ≠ legal to scrape**: this skill does not circumvent, and must not be used to circumvent, any website's technical measures.
+- Business-registration and qualification data can be **stale or change without notice**. Before any formal engagement, confirm in writing with the factory and rely on the latest official documents.
+- This repository is a **methodology tool**. Output is for reference only and is **not legal, tax or commercial advice**.
+
+---
+
+## Contributing
+
+Issues and pull requests are welcome — especially:
+
+- **Channels that work in your category or region** — the channel matrix is deliberately generic; category-specific channels are the most useful additions.
+- **New "it looked like a factory but wasn't" failure patterns.** These are the most valuable contributions of all: every one of them becomes a check that saves the next person a bad order.
+
+---
 
 ## License
 
